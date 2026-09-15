@@ -21,12 +21,14 @@ struct CameraShowcaseView: View {
         }
         Picker("Frame rate", selection: $viewModel.frameRate) {
           ForEach([2, 7, 15, 24, 30], id: \.self) { fps in
-            Text("\(fps) fps").tag(fps)
+            Text("\(fps) fps").tag(UInt(fps))
           }
         }
 
-        Button("Start stream") { viewModel.startStreaming() }
-          .disabled(viewModel.streamState != .stopped)
+        Button(viewModel.isPreparing ? "Checking camera permission…" : "Start stream") {
+          Task { await viewModel.startStreaming() }
+        }
+        .disabled(viewModel.streamState != .stopped || viewModel.isPreparing)
         Button("Capture photo") { viewModel.capturePhoto() }
           .disabled(viewModel.streamState != .streaming)
         Button("Stop", role: .destructive) { viewModel.stopStreaming() }

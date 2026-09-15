@@ -33,34 +33,25 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
-	<!-- Begin required section for Device Access Toolkit apps -->
 	<key>MWDAT</key>
 	<dict>
 		<key>AppLinkURLScheme</key>
 		<string>datplayground://</string>
-		<!-- Developer Mode: "0". Production: values from the Wearables Developer Center. -->
-		<key>MetaAppID</key>
-		<string>0</string>
 		<key>ClientToken</key>
+		<string>0</string>
+		<key>MetaAppID</key>
 		<string>0</string>
 		<key>TeamID</key>
 		<string>$(DEVELOPMENT_TEAM)</string>
 	</dict>
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>processing</string>
-		<string>bluetooth-central</string>
-		<string>bluetooth-peripheral</string>
-	</array>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>DAT Playground needs Bluetooth to connect to your glasses.</string>
-	<key>NSLocalNetworkUsageDescription</key>
-	<string>This allows your phone to find and connect to your glasses over Wi-Fi.</string>
 	<key>NSBonjourServices</key>
 	<array>
 		<string>_bonjour._tcp</string>
 	</array>
-	<!-- End required section for Device Access Toolkit apps -->
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>This allows your phone to find and connect to your glasses over Wi-Fi.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -68,6 +59,12 @@
 	</dict>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>processing</string>
+		<string>bluetooth-central</string>
+		<string>bluetooth-peripheral</string>
+	</array>
 	<key>UILaunchScreen</key>
 	<dict/>
 	<key>UIRequiredDeviceCapabilities</key>
