@@ -1,0 +1,12 @@
+{
+  "name": "MRBD Playground",
+  "short_name": "Playground",
+  "description": "Meta Ray-Ban Display web app capability showcase",
+  "icons": [
+    { "src": "favicon.png", "sizes": "128x128", "type": "image/png" }
+  ],
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "display": "standalone",
+  "start_url": "./"
+}

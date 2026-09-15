@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=600, height=600, initial-scale=1.0, user-scalable=no">
+  <meta name="description" content="Meta Ray-Ban Display 功能演示合集：D-pad 焦点导航、EMG 手势、传感器、GPS、文本输入、Canvas 渲染、本地存储与网络请求。">
+  <meta name="mrbd-web-app-capable" content="yes">
+  <title>MRBD Playground</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+
+    <!-- ============ 首页：功能目录 ============ -->
+    <div id="home" class="screen">
+      <header class="header">
+        <h1>MRBD Playground</h1>
+        <span class="header-meta" id="net-status">在线</span>
+      </header>
+      <div class="content list-container" id="home-list">
+        <button class="list-item focusable" data-action="goto" data-target="ui">
+          <span class="list-item-icon">&#9635;</span>
+          <div class="list-item-content">
+            <div class="list-item-title">UI 组件</div>
+            <div class="list-item-meta">Cards · Tabs · Toast · Progress</div>
+          </div>
+        </button>
+        <button class="list-item focusable" data-action="goto" data-target="dpad">
+          <span class="list-item-icon">&#10021;</span>
+          <div class="list-item-content">
+            <div class="list-item-title">D-pad 与焦点</div>
+            <div class="list-item-meta">Focus ring · Key events</div>
+          </div>
+        </button>
+        <button class="list-item focusable" data-action="goto" data-target="draw">
+          <span class="list-item-icon">&#9998;</span>
+          <div class="list-item-content">
+            <div class="list-item-title">Pinch 拖拽画板</div>
+            <div class="list-item-meta">Continuous drag · Pointer events</div>
+          </div>
+        </button>
+        <button class="list-item focusable" data-action="goto" data-target="sensors">
+          <span class="list-item-icon">&#9678;</span>
+          <div class="list-item-content">
+            <div class="list-item-title">IMU 传感器</div>
+            <div class="list-item-meta">Compass · Level · Accelerometer</div>
+          </div>
+        </button>
+        <button class="list-item focusable" data-action="goto" data-target="location">
+          <span class="list-item-icon">&#9737;</span>
+          <div class="list-item-content">
+            <div class="list-item-title">定位 GPS</div>
+            <div class="list-item-meta">Geolocation via phone</div>
+          </div>
+        </button>
+        <button class="list-item focusable" data-action="goto" data-target="textinput">
+          <span class="list-item-icon">&#9000;</span>
+          <div class="list-item-content">
+            <div class="list-item-title">文本输入</div>
+            <div class="list-item-meta">On-glasses composer</div>
+          </div>
+        </button>
+        <button class="list-item focusable" data-action="goto" data-target="canvas">
+          <span class="list-item-icon">&#10039;</span>
+          <div class="list-item-content">
+            <div class="list-item-title">Canvas 渲染</div>
+            <div class="list-item-meta">60fps starfield · FPS meter</div>
+          </div>
+        </button>
+        <button class="list-item focusable" data-action="goto" data-target="storage">
+          <span class="list-item-icon">&#9827;</span>
+          <div class="list-item-content">
+            <div class="list-item-title">本地存储</div>
+            <div class="list-item-meta">localStorage persistence</div>
+          </div>
+        </button>
+        <button class="list-item focusable" data-action="goto" data-target="network">
+          <span class="list-item-icon">&#9729;</span>
+          <div class="list-item-content">
+            <div class="list-item-title">网络请求</div>
+            <div class="list-item-meta">Open-Meteo weather API</div>
+          </div>
+        </button>
+        <button class="list-item focusable" data-action="goto" data-target="about">
+          <span class="list-item-icon">&#9432;</span>
+          <div class="list-item-content">
+            <div class="list-item-title">关于 / 环境</div>
+            <div class="list-item-meta">Runtime capabilities</div>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- ============ UI 组件 ============ -->
+    <div id="ui" class="screen hidden">
+      <header class="header">
+        <h1>UI 组件</h1>
+        <span class="header-meta">DOM / CSS</span>
+      </header>
+      <div class="content">
+        <div class="tab-bar">
+          <button class="tab-item focusable active" data-action="ui-tab" data-tab="cards">卡片</button>
+          <button class="tab-item focusable" data-action="ui-tab" data-tab="feedback">反馈</button>
+          <button class="tab-item focusable" data-action="ui-tab" data-tab="loading">加载</button>
+        </div>
+
+        <div id="ui-cards" class="ui-panel">
+          <div class="data-grid">
+            <div class="card focusable" tabindex="0" data-action="card-tap">
+              <div class="card-subtitle">Bitcoin</div>
+              <div class="card-value">$64,210</div>
+              <div class="card-subtitle"><span class="badge badge-success">+2.4%</span></div>
+            </div>
+            <div class="card focusable" tabindex="0" data-action="card-tap">
+              <div class="card-subtitle">步数 Steps</div>
+              <div class="card-value">8,642</div>
+              <div class="card-subtitle"><span class="badge badge-info">今日</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="ui-feedback" class="ui-panel hidden">
+          <button class="nav-item focusable primary" data-action="demo-toast">弹出 Toast</button>
+          <button class="nav-item focusable" data-action="demo-progress">进度条 +10%</button>
+          <div class="progress-bar"><div class="progress-fill" id="ui-progress" style="width: 30%"></div></div>
+          <div class="gap-sm" style="display:flex; gap:8px;">
+            <span class="badge badge-success">成功</span>
+            <span class="badge badge-warning">警告</span>
+            <span class="badge badge-danger">错误</span>
+            <span class="badge badge-info">信息</span>
+          </div>
+        </div>
+
+        <div id="ui-loading" class="ui-panel hidden">
+          <div class="skeleton skeleton-line medium"></div>
+          <div class="skeleton skeleton-line"></div>
+          <div class="skeleton skeleton-line short"></div>
+          <div class="loading-container" style="padding: 12px;">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Loading&hellip;</div>
+          </div>
+        </div>
+      </div>
+      <nav class="nav-bar">
+        <button class="nav-item focusable" data-action="back">&#8617; 返回</button>
+      </nav>
+    </div>
+
+    <!-- ============ D-pad 与焦点 ============ -->
+    <div id="dpad" class="screen hidden">
+      <header class="header">
+        <h1>D-pad 与焦点</h1>
+        <span class="header-meta" id="dpad-last">按方向键试试</span>
+      </header>
+      <div class="content">
+        <div class="dpad-grid">
+          <button class="dpad-cell focusable" data-action="dpad-tap" data-idx="1">1</button>
+          <button class="dpad-cell focusable" data-action="dpad-tap" data-idx="2">2</button>
+          <button class="dpad-cell focusable" data-action="dpad-tap" data-idx="3">3</button>
+          <button class="dpad-cell focusable" data-action="dpad-tap" data-idx="4">4</button>
+          <button class="dpad-cell focusable" data-action="dpad-tap" data-idx="5">5</button>
+          <button class="dpad-cell focusable" data-action="dpad-tap" data-idx="6">6</button>
+        </div>
+        <div class="hint-text">
+          方向键 / 捏合拖动 = 移动焦点 &middot; Pinch = 激活 &middot; 拇指+中指 = 返回
+        </div>
+        <div class="key-log" id="key-log">&mdash;</div>
+      </div>
+      <nav class="nav-bar">
+        <button class="nav-item focusable" data-action="back">&#8617; 返回</button>
+      </nav>
+    </div>
+
+    <!-- ============ 画板（连续拖拽） ============ -->
+    <div id="draw" class="screen hidden">
+      <header class="header">
+        <h1>拖拽画板</h1>
+        <span class="header-meta">touch-action: none</span>
+      </header>
+      <div class="content" style="gap: 8px;">
+        <canvas id="draw-canvas" width="552" height="330"></canvas>
+        <div class="slider-row">
+          <span class="card-subtitle">笔刷</span>
+          <div class="slider-track" id="brush-slider">
+            <div class="slider-fill" id="brush-fill" style="width: 30%"></div>
+          </div>
+          <span class="card-subtitle" id="brush-size">6px</span>
+        </div>
+      </div>
+      <nav class="nav-bar">
+        <button class="nav-item focusable danger" data-action="draw-clear">清空</button>
+        <button class="nav-item focusable" data-action="back">&#8617; 返回</button>
+      </nav>
+    </div>
+
+    <!-- ============ IMU 传感器 ============ -->
+    <div id="sensors" class="screen hidden">
+      <header class="header">
+        <h1>IMU 传感器</h1>
+        <span class="header-meta" id="sensor-status">未启动</span>
+      </header>
+      <div class="content" style="gap: 8px;">
+        <div class="sensor-row">
+          <div class="mini-compass">
+            <div class="mini-needle" id="compass-needle"></div>
+            <div class="mini-n">N</div>
+          </div>
+          <div class="mini-level">
+            <div class="mini-bubble" id="level-bubble"></div>
+            <div class="mini-cross"></div>
+          </div>
+        </div>
+        <div class="data-grid">
+          <div class="card"><div class="card-subtitle">航向 Heading</div><div class="card-value sm" id="v-heading">--&deg;</div></div>
+          <div class="card"><div class="card-subtitle">倾斜 Tilt</div><div class="card-value sm" id="v-tilt">--&deg;</div></div>
+          <div class="card"><div class="card-subtitle">加速度 |a|</div><div class="card-value sm" id="v-accel">-- m/s&sup2;</div></div>
+          <div class="card"><div class="card-subtitle">角速度 |&omega;|</div><div class="card-value sm" id="v-gyro">-- &deg;/s</div></div>
+        </div>
+      </div>
+      <nav class="nav-bar">
+        <button class="nav-item focusable primary" data-action="sensors-start">启动</button>
+        <button class="nav-item focusable danger" data-action="sensors-stop">停止</button>
+        <button class="nav-item focusable" data-action="back">&#8617;</button>
+      </nav>
+    </div>
+
+    <!-- ============ 定位 GPS ============ -->
+    <div id="location" class="screen hidden">
+      <header class="header">
+        <h1>定位 GPS</h1>
+        <span class="header-meta">来自配对手机</span>
+      </header>
+      <div class="content">
+        <div class="data-grid">
+          <div class="card"><div class="card-subtitle">纬度 Lat</div><div class="card-value sm" id="loc-lat">--</div></div>
+          <div class="card"><div class="card-subtitle">经度 Lon</div><div class="card-value sm" id="loc-lon">--</div></div>
+          <div class="card"><div class="card-subtitle">精度 Accuracy</div><div class="card-value sm" id="loc-acc">--</div></div>
+          <div class="card"><div class="card-subtitle">状态 Status</div><div class="card-value sm" id="loc-status">待定位</div></div>
+        </div>
+        <div class="hint-text">首次定位可能需要数秒（手机取得 GPS fix）。</div>
+      </div>
+      <nav class="nav-bar">
+        <button class="nav-item focusable primary" data-action="loc-get">获取位置</button>
+        <button class="nav-item focusable" data-action="back">&#8617; 返回</button>
+      </nav>
+    </div>
+
+    <!-- ============ 文本输入 ============ -->
+    <div id="textinput" class="screen hidden">
+      <header class="header">
+        <h1>文本输入</h1>
+        <span class="header-meta">手写 + 语音</span>
+      </header>
+      <div class="content">
+        <input id="search-box" type="search" class="text-input focusable" placeholder="轻点后手写或说话来搜索&hellip;">
+        <div class="list-container" id="search-results" style="max-height: 190px;">
+          <!-- filtered items rendered by JS -->
+        </div>
+        <textarea id="note-box" class="text-input focusable" rows="2" placeholder="轻点写一条便签（会自动保存）"></textarea>
+      </div>
+      <nav class="nav-bar">
+        <button class="nav-item focusable" data-action="back">&#8617; 返回</button>
+      </nav>
+    </div>
+
+    <!-- ============ Canvas 渲染 ============ -->
+    <div id="canvas" class="screen hidden">
+      <header class="header">
+        <h1>Canvas 渲染</h1>
+        <span class="header-meta" id="fps-meter">-- fps</span>
+      </header>
+      <div class="content" style="gap: 8px;">
+        <canvas id="star-canvas" width="552" height="360"></canvas>
+      </div>
+      <nav class="nav-bar">
+        <button class="nav-item focusable primary" data-action="stars-start">启动</button>
+        <button class="nav-item focusable danger" data-action="stars-stop">停止</button>
+        <button class="nav-item focusable" data-action="back">&#8617;</button>
+      </nav>
+    </div>
+
+    <!-- ============ 本地存储 ============ -->
+    <div id="storage" class="screen hidden">
+      <header class="header">
+        <h1>本地存储</h1>
+        <span class="header-meta">localStorage</span>
+      </header>
+      <div class="content">
+        <div class="card text-center">
+          <div class="card-subtitle">这个计数器在重启后仍会保留</div>
+          <div class="card-value" id="counter-value">0</div>
+        </div>
+        <div class="nav-bar" style="padding: 0; background: transparent;">
+          <button class="nav-item focusable primary" data-action="counter-inc">+1</button>
+          <button class="nav-item focusable" data-action="counter-dec">-1</button>
+          <button class="nav-item focusable danger" data-action="counter-reset">清零</button>
+        </div>
+        <div class="card">
+          <div class="card-subtitle">已保存的便签（来自「文本输入」页）</div>
+          <div id="saved-note" class="note-text">（暂无）</div>
+        </div>
+      </div>
+      <nav class="nav-bar">
+        <button class="nav-item focusable" data-action="back">&#8617; 返回</button>
+      </nav>
+    </div>
+
+    <!-- ============ 网络请求 ============ -->
+    <div id="network" class="screen hidden">
+      <header class="header">
+        <h1>网络请求</h1>
+        <span class="header-meta" id="net-src">Open-Meteo</span>
+      </header>
+      <div class="content">
+        <div id="net-loading" class="loading-container hidden">
+          <div class="loading-spinner"></div>
+          <div class="loading-text">请求中&hellip;</div>
+        </div>
+        <div id="net-error" class="error-container hidden">
+          <div class="error-icon">&#9888;</div>
+          <div class="error-message" id="net-error-msg">请求失败</div>
+        </div>
+        <div id="net-result" class="data-grid hidden">
+          <div class="card"><div class="card-subtitle">城市</div><div class="card-value sm" id="wx-city">--</div></div>
+          <div class="card"><div class="card-subtitle">气温</div><div class="card-value sm" id="wx-temp">--&deg;C</div></div>
+          <div class="card"><div class="card-subtitle">风速</div><div class="card-value sm" id="wx-wind">-- km/h</div></div>
+          <div class="card"><div class="card-subtitle">数据时间</div><div class="card-value sm" id="wx-time">--</div></div>
+        </div>
+        <div class="hint-text" id="net-hint">带 5 分钟内存缓存，重复请求即时返回。</div>
+      </div>
+      <nav class="nav-bar">
+        <button class="nav-item focusable primary" data-action="net-fetch">上海天气</button>
+        <button class="nav-item focusable" data-action="net-refresh">强制刷新</button>
+        <button class="nav-item focusable" data-action="back">&#8617;</button>
+      </nav>
+    </div>
+
+    <!-- ============ 关于 / 环境 ============ -->
+    <div id="about" class="screen hidden">
+      <header class="header">
+        <h1>关于 / 环境</h1>
+        <span class="header-meta">Runtime</span>
+      </header>
+      <div class="content list-container" id="about-list">
+        <!-- rendered by JS -->
+      </div>
+      <nav class="nav-bar">
+        <button class="nav-item focusable" data-action="back">&#8617; 返回</button>
+      </nav>
+    </div>
+
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

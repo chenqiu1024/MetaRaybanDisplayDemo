@@ -1,0 +1,345 @@
+/*
+ * MRBD Playground — styles
+ * Based on the Meta Wearables Web App AI Toolkit template (BSD license):
+ * https://github.com/facebookincubator/meta-wearables-webapp
+ *
+ * Additive display physics:
+ *  - #000000 emits no light => transparent (real world shows through). Page background only.
+ *  - UI surfaces must use dark grays so they stay visible.
+ */
+
+:root {
+  --bg-primary: #000000;   /* transparent on the additive display */
+  --bg-secondary: #0a0a0f;
+  --bg-tertiary: #14141f;
+  --bg-card: #1a1a2e;
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0b0;
+  --text-muted: #606070;
+  --accent-primary: #00d4ff;
+  --accent-secondary: #00ff88;
+  --accent-warm: #ff9f43;
+  --danger: #ff4466;
+  --focus-ring: #00d4ff;
+  --focus-glow: rgba(0, 212, 255, 0.4);
+  --success: #00ff88;
+  --warning: #ffaa00;
+  --info: #00b4d8;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+    'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  width: 600px;
+  height: 600px;
+  overflow: hidden;
+  /* Opt in to the continuous EMG drag stream (page-level, must be in initial CSS) */
+  touch-action: none;
+}
+
+#app { width: 100%; height: 100%; position: relative; }
+
+/* --- Screens --- */
+.screen {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 8px; /* safe margin */
+}
+.screen.hidden { display: none; }
+
+/* --- Header --- */
+.header {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  gap: 12px;
+  flex-shrink: 0;
+}
+.header h1 { font-size: 22px; font-weight: 600; flex: 1; }
+.header-meta { font-size: 13px; color: var(--text-secondary); }
+
+/* --- Content Area --- */
+.content {
+  flex: 1;
+  padding: 12px 4px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+}
+
+/* --- Focus States (critical for EMG/D-pad) --- */
+.focusable {
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  border: 2px solid transparent;
+  cursor: pointer;
+  min-height: 44px;
+}
+.focusable:focus {
+  outline: none;
+  border-color: var(--focus-ring);
+  box-shadow: 0 0 20px var(--focus-glow);
+}
+
+/* --- Navigation Bar --- */
+.nav-bar {
+  display: flex;
+  gap: 8px;
+  padding: 10px 4px 4px;
+  background: transparent;
+  flex-shrink: 0;
+}
+.nav-item {
+  flex: 1;
+  padding: 12px 14px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 15px;
+  font-weight: 500;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.nav-item:focus { background: var(--bg-card); }
+.nav-item.primary { background: var(--accent-primary); color: #0a0a0f; }
+.nav-item.primary:focus { background: #33ddff; }
+.nav-item.danger { background: var(--danger); color: white; }
+
+/* --- Cards --- */
+.card {
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  border: 2px solid transparent;
+}
+.card:focus { border-color: var(--focus-ring); box-shadow: 0 0 20px var(--focus-glow); }
+.card-title { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
+.card-subtitle { font-size: 14px; color: var(--text-secondary); }
+.card-value { font-size: 28px; font-weight: 700; color: var(--accent-primary); }
+.card-value.sm { font-size: 20px; }
+
+/* --- List Items --- */
+.list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+}
+.list-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 15px;
+  text-align: left;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.list-item:focus { background: var(--bg-card); }
+.list-item-icon { font-size: 22px; flex-shrink: 0; width: 34px; text-align: center; color: var(--accent-primary); }
+.list-item-content { flex: 1; min-width: 0; }
+.list-item-title { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.list-item-meta { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+
+/* --- Loading / Skeleton --- */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px;
+}
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--bg-tertiary);
+  border-top-color: var(--accent-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { font-size: 15px; color: var(--text-secondary); }
+
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--bg-card) 50%, var(--bg-tertiary) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+@keyframes shimmer { to { background-position: -200% 0; } }
+.skeleton-line { height: 16px; margin-bottom: 8px; border-radius: 4px; }
+.skeleton-line.short { width: 60%; }
+.skeleton-line.medium { width: 80%; }
+
+/* --- Error --- */
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px;
+  text-align: center;
+}
+.error-icon { font-size: 40px; color: var(--warning); }
+.error-message { font-size: 15px; color: var(--text-secondary); max-width: 400px; }
+
+/* --- Toast --- */
+.toast {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-90px);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  padding: 12px 24px;
+  border-radius: 24px;
+  font-size: 14px;
+  max-width: 536px;
+  border: 1px solid var(--accent-primary);
+  transition: transform 0.3s ease;
+  z-index: 100;
+  pointer-events: none;
+}
+.toast.visible { transform: translateX(-50%) translateY(0); }
+.toast.error { border-color: var(--danger); }
+.toast.success { border-color: var(--success); }
+
+/* --- Progress / Badges / Grid / Tabs / Inputs --- */
+.progress-bar { width: 100%; height: 6px; background: var(--bg-tertiary); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--accent-primary); border-radius: 3px; transition: width 0.3s ease; }
+
+.badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+.badge-success { background: rgba(0, 255, 136, 0.2); color: var(--success); }
+.badge-warning { background: rgba(255, 170, 0, 0.2); color: var(--warning); }
+.badge-danger { background: rgba(255, 68, 102, 0.2); color: var(--danger); }
+.badge-info { background: rgba(0, 180, 216, 0.2); color: var(--info); }
+
+.data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.tab-bar { display: flex; gap: 4px; padding: 4px; background: var(--bg-secondary); border-radius: var(--radius-md); flex-shrink: 0; }
+.tab-item { flex: 1; padding: 10px 8px; background: transparent; border-radius: var(--radius-sm); color: var(--text-secondary); font-size: 14px; font-weight: 500; text-align: center; }
+.tab-item.active { background: var(--bg-tertiary); color: var(--text-primary); }
+.tab-item:focus { background: var(--bg-card); color: var(--text-primary); }
+
+.text-input {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 16px;
+  font-family: inherit;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border-radius: var(--radius-md);
+  border: 2px solid transparent;
+  resize: none;
+}
+.text-input:focus { border-color: var(--focus-ring); box-shadow: 0 0 20px var(--focus-glow); outline: none; }
+.text-input::placeholder { color: var(--text-muted); }
+
+/* --- App-specific: D-pad demo --- */
+.dpad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.dpad-cell {
+  height: 88px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 24px;
+  font-weight: 700;
+}
+.dpad-cell:focus { background: var(--bg-card); }
+.hint-text { font-size: 13px; color: var(--text-secondary); text-align: center; }
+.key-log {
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 14px;
+  color: var(--accent-secondary);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  text-align: center;
+}
+
+/* --- App-specific: draw --- */
+#draw-canvas, #star-canvas {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  align-self: center;
+  touch-action: none;
+}
+.slider-row { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.slider-track {
+  flex: 1;
+  height: 20px;
+  background: var(--bg-tertiary);
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+}
+.slider-fill { height: 100%; background: var(--accent-warm); border-radius: 10px; }
+
+/* --- App-specific: sensors --- */
+.sensor-row { display: flex; gap: 16px; justify-content: center; flex-shrink: 0; }
+.mini-compass, .mini-level {
+  width: 132px;
+  height: 132px;
+  border: 3px solid var(--bg-tertiary);
+  border-radius: 50%;
+  position: relative;
+  background: var(--bg-secondary);
+  flex-shrink: 0;
+}
+.mini-needle {
+  width: 4px;
+  height: 52px;
+  background: linear-gradient(to top, var(--text-primary) 50%, var(--danger) 50%);
+  border-radius: 2px;
+  transform-origin: center bottom;
+  position: absolute;
+  bottom: 50%;
+  left: calc(50% - 2px);
+  transition: transform 0.1s ease;
+}
+.mini-n { position: absolute; top: 6px; left: 50%; transform: translateX(-50%); font-size: 13px; font-weight: 700; color: var(--danger); }
+.mini-bubble {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--accent-primary);
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s ease;
+  box-shadow: 0 0 16px var(--focus-glow);
+}
+.mini-cross {
+  position: absolute; top: 50%; left: 50%;
+  width: 16px; height: 16px;
+  transform: translate(-50%, -50%);
+  border: 2px solid var(--success);
+  border-radius: 50%;
+}
+
+/* --- App-specific: notes --- */
+.note-text { font-size: 15px; color: var(--text-primary); margin-top: 6px; word-break: break-all; }
+
+/* --- Utility --- */
+.hidden { display: none !important; }
+.text-center { text-align: center; }
+.ui-panel { display: flex; flex-direction: column; gap: 12px; }
